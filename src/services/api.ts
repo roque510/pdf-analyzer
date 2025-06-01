@@ -42,7 +42,7 @@ export class PDFAnalyzerAPI {
   private baseUrl: string
 
   private constructor() {
-    this.baseUrl = 'http://127.0.0.1:8000/api'
+       this.baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api'
   }
 
   public static getInstance(): PDFAnalyzerAPI {
