@@ -4,64 +4,33 @@ import { useState } from 'react'
 import { Toaster, toaster } from "@/components/ui/toaster"
 import Footer from '@/components/footer'
 import { PDFUpload } from '@/components/pdf-upload'
-
-interface MockResponse {
-  answer: string
-  confidence: number
-  source: string
-}
+import { pdfAnalyzerAPI, PDFResponse, APIError } from '@/services/api'
 
 export const Home = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
+  const [pdfId, setPdfId] = useState<string | null>(null)
+  const [pdfName, setPdfName] = useState<string | null>(null)
   const [question, setQuestion] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [response, setResponse] = useState<MockResponse | null>(null)
+  const [response, setResponse] = useState<PDFResponse | null>(null)
 
-  const handlePdfUpload = (file: File) => {
-    setPdfFile(file)
-    setResponse(null)
-  }
-
-  const handleQuestionSubmit = async () => {
-    if (!question.trim()) return
-    
-    setIsLoading(true)
-    setResponse(null)
+  const handlePdfUpload = async (file: File) => {
     try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // Mock response
-      const mockResponses: MockResponse[] = [
-        {
-          answer: "Based on the document, the main points discussed are the implementation of AI-driven analysis and the importance of data security in modern systems.",
-          confidence: 0.92,
-          source: "Page 3, Section 2.1"
-        },
-        {
-          answer: "The document outlines three key methodologies: machine learning algorithms, natural language processing, and statistical analysis.",
-          confidence: 0.88,
-          source: "Page 5, Section 3.2"
-        },
-        {
-          answer: "According to the research findings, the system achieved a 95% accuracy rate in document classification tasks.",
-          confidence: 0.95,
-          source: "Page 8, Section 4.3"
-        }
-      ]
-      
-      const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)]
-      setResponse(randomResponse)
-      
+      setIsLoading(true)
+      const result = await pdfAnalyzerAPI.uploadPDF(file)
+      setPdfFile(file)
+      setPdfId(result.id)
+      setPdfName(file.name)
       toaster.create({
         title: "Success",
-        description: "Answer generated successfully",
+        description: "PDF uploaded successfully",
         type: "success"
       })
     } catch (error) {
+      console.error('Upload error:', error)
       toaster.create({
         title: "Error",
-        description: "Failed to process question. Please try again",
+        description: error instanceof Error ? error.message : "Failed to upload PDF",
         type: "error"
       })
     } finally {
@@ -69,8 +38,42 @@ export const Home = () => {
     }
   }
 
+  const handleQuestionSubmit = async () => {
+    if (!pdfId || !question.trim()) return
+    
+    setIsLoading(true)
+    setResponse(null)
+    try {
+      const result = await pdfAnalyzerAPI.askQuestion(pdfId, question)
+      setResponse(result)
+      toaster.create({
+        title: "Success",
+        description: "Answer generated successfully",
+        type: "success"
+      })
+    } catch (error) {
+      if (error instanceof APIError) {
+        toaster.create({
+          title: "Error",
+          description: error.message,
+          type: "error"
+        })
+      } else {
+        toaster.create({
+          title: "Error",
+          description: "Failed to process question. Please try again.",
+          type: "error"
+        })
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const handleReset = () => {
     setPdfFile(null)
+    setPdfId(null)
+    setPdfName(null)
     setQuestion('')
     setResponse(null)
     toaster.create({

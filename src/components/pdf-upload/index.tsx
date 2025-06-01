@@ -22,8 +22,10 @@ export const PDFUpload = (props: PDFUploadProps) => {
       onFileChange={(e) => {
         const file = e.acceptedFiles[0]
         if (file) {
+          // Ensure we're passing a proper File object
+          const pdfFile = new File([file], file.name, { type: 'application/pdf' })
           setFileName(file.name)
-          onFileSelect?.(file)
+          onFileSelect?.(pdfFile)
           toaster.create({
             title: "Success",
             description: "PDF uploaded successfully",
