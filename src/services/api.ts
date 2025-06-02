@@ -17,26 +17,6 @@ export class APIError extends Error {
   }
 }
 
-const MOCK_DELAY = 1500 // 1.5 seconds
-
-const mockResponses: PDFResponse[] = [
-  {
-    answer: "Based on the document, the main points discussed are the implementation of AI-driven analysis and the importance of data security in modern systems.",
-    confidence: 0.92,
-    source: "Page 3, Section 2.1"
-  },
-  {
-    answer: "The document outlines three key methodologies: machine learning algorithms, natural language processing, and statistical analysis.",
-    confidence: 0.88,
-    source: "Page 5, Section 3.2"
-  },
-  {
-    answer: "According to the research findings, the system achieved a 95% accuracy rate in document classification tasks.",
-    confidence: 0.95,
-    source: "Page 8, Section 4.3"
-  }
-]
-
 export class PDFAnalyzerAPI {
   private static instance: PDFAnalyzerAPI
   private baseUrl: string

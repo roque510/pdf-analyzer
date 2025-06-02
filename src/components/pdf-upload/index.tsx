@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, FileUpload, Stack, Text, useEnvironmentContext } from '@chakra-ui/react'
+import { Button, FileUpload, Stack, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { toaster } from '@/components/ui/toaster'
 
@@ -10,8 +10,7 @@ interface PDFUploadProps extends FileUpload.RootProps {
 
 export const PDFUpload = (props: PDFUploadProps) => {
   const { onFileSelect, ...rest } = props
-  const [fileName, setFileName] = useState<string>()
-  const env = useEnvironmentContext()
+  const [fileName, setFileName] = useState<string>()  
 
   return (
     <FileUpload.Root

@@ -8,8 +8,7 @@ import { pdfAnalyzerAPI, PDFResponse, APIError } from '@/services/api'
 
 export const Home = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
-  const [pdfId, setPdfId] = useState<string | null>(null)
-  const [pdfName, setPdfName] = useState<string | null>(null)
+  const [pdfId, setPdfId] = useState<string | null>(null)  
   const [question, setQuestion] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [response, setResponse] = useState<PDFResponse | null>(null)
@@ -19,8 +18,7 @@ export const Home = () => {
       setIsLoading(true)
       const result = await pdfAnalyzerAPI.uploadPDF(file)
       setPdfFile(file)
-      setPdfId(result.id)
-      setPdfName(file.name)
+      setPdfId(result.id)      
       toaster.create({
         title: "Success",
         description: "PDF uploaded successfully",
@@ -73,7 +71,6 @@ export const Home = () => {
   const handleReset = () => {
     setPdfFile(null)
     setPdfId(null)
-    setPdfName(null)
     setQuestion('')
     setResponse(null)
     toaster.create({
